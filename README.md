@@ -1,0 +1,2 @@
+# aimyplus-sql
+Internship assignment
