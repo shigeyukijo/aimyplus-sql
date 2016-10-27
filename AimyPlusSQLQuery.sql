@@ -89,14 +89,15 @@ GROUP BY chd.Id, chd.Name, c.FirstName, c.MiddleName, c.LastName
 ORDER BY chd.Name;
 
 -- Child list with emergency contact --
-SELECT chd.Id, chd.Name AS 'Child Name', CONCAT('Parent Name: ', c.FirstName, ' ', c.MiddleName, ' ', c.LastName, 'Mobile: ', c.Mobile, ' Landline: ', c.Landline, ' Office: ', c.Office) AS 'Emergency Contact 1', CONCAT('Parent Name: ', c2.FirstName, ' ', c2.MiddleName, ' ', c2.LastName, 'Mobile: ', c2.Mobile, ' Landline: ', c2.Landline, ' Office: ', c2.Office) AS 'Emergency Contact 2'
-FROM [Kiwi-UAT].[dbo].[Child] chd
-LEFT JOIN [Kiwi-UAT].[dbo].[Contact] c on chd.EmergencyContact1Id = c.Id
-LEFT JOIN [Kiwi-UAT].[dbo].[Contact] c2 on chd.EmergencyContact2Id = c.Id
-INNER JOIN [Kiwi-UAT].[dbo].[Org_Child] ou on chd.Id = ou.ChildId
-INNER JOIN [Kiwi-UAT].[dbo].[Org] o on ou.SiteId = o.Id
-WHERE o.Name LIKE 'Vindya' AND ou.IsActive = 1 AND chd.IsActive = 1
-ORDER BY chd.Name;
+select chd.Name, CONCAT(c.FirstName, ' ', c.MiddleName, ' ', c.LastName) AS 'Parent Name'
+from dbo.Child chd 
+inner join dbo.User_Child uchd on chd.Id = uchd.ChildId
+inner join dbo.[User] u on uchd.UserId = u.Id
+inner join dbo.User_Contact uc on uc.UserId = u.Id
+inner join dbo.Contact c on uc.ContactId = c.Id
+inner join dbo.Org_Child oc on uchd.ChildId = oc.ChildId
+where oc.SiteId = 335 and oc.IsActive = 1 and uc.ContactTypeId IN(11, 12) and chd.IsActive = 1
+order by chd.Name;
 
 --Child List with medical condition --
 SELECT chd.Id, chd.Name AS 'Child Name', cond.Name AS 'Medical Condition', cc.Symptoms AS 'Symptoms', cc.TreatmentDesc AS 'Treatment'
